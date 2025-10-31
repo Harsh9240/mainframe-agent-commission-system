@@ -1,0 +1,15 @@
+//TECN115A JOB NOTIFY=&SYSUID                                           00010000
+//STEP001  EXEC PGM=IDCAMS                                              00020000
+//SYSPRINT DD SYSOUT=*                                                  00030000
+//SYSOUT   DD SYSOUT=*                                                  00040000
+//SYSIN    DD *                                                         00050000
+    DEFINE CLUSTER(NAME(TECN115.L1G.AGTCMN.KSDS) -                      00060000
+                   RECORDSIZE(80,80) -                                  00070000
+                   CISZ(4096) -                                         00080000
+                   TRACK(1,1) -                                         00090000
+                   VOLUME(ZAPRD7) -                                     00100000
+                   FREESPACE(10,10) -                                   00110000
+                   KEYS(5,0) -                                          00120000
+                   INDEXED)                                             00130000
+/*                                                                      00140000
+

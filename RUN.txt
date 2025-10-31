@@ -1,0 +1,8 @@
+//TECN115A JOB NOTIFY=&SYSUID                                           00010002
+//RUN EXEC PGM=CA11G115                                --> MEMBER NAME  00040009
+//STEPLIB DD DSN=TECN115.COBOL.LOADLIB,DISP=SHR -> LOADLIB NAME         00050002
+//SYSPRINT DD SYSOUT=*                                                  00060000
+//INPAGTPS DD DSN=TECN115.L1G.AGTCMN.PS2,DISP=SHR                       00080009
+//OUTAGTKS DD DSN=TECN115.L1G.AGTCMN.KSDS,DISP=SHR                      00090010
+//SYSIN DD DUMMY                                                        00100000
+

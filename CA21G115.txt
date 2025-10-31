@@ -1,0 +1,12 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. CA21G115.                                            00020000
+       DATA DIVISION.                                                   00030000
+       WORKING-STORAGE SECTION.                                         00040000
+       LINKAGE SECTION.                                                 00050000
+       77 LK-PLCY-CONT   PIC 9(03).                                     00060005
+       77 LK-COMM        PIC 9(03)V9(02).                               00080007
+       77 LK-TOT-COM     PIC 9(07)V9(02).                               00081003
+       PROCEDURE DIVISION USING LK-PLCY-CONT LK-COMM LK-TOT-COM.        00083004
+           COMPUTE LK-TOT-COM ROUNDED = LK-PLCY-CONT * LK-COMM.         00085008
+           GOBACK.                                                      00086002
+

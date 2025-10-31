@@ -1,0 +1,22 @@
+//TECN115A JOB NOTIFY=&SYSUID                                           00010000
+//STEP001  EXEC PGM=IEFBR14                                             00011000
+//DD1      DD DSN=TECN115.L1G.AGTCMN.PS2,                               00040000
+//         DISP=(MOD,DELETE,DELETE),                                    00050000
+//         SPACE=(TRK,(1,1)),                                           00060000
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)                          00070000
+//STEP002  EXEC PGM=SORT                                                00080000
+//SYSPRINT DD SYSOUT=*                                                  00090000
+//SYSOUT   DD SYSOUT=*                                                  00100000
+//SORTIN   DD DSN=TECN115.L1G.AGTCMN.PS1,                               00101001
+//         DISP=SHR                                                     00102001
+//SORTOUT  DD DSN=TECN115.L1G.AGTCMN.PS2,                               00103001
+//         DISP=(NEW,CATLG),                                            00104001
+//         SPACE=(TRK,(1,1)),                                           00105001
+//         DCB=(LRECL=80,RECFM=FB,BLKSIZE=800)                          00106001
+//SYSIN    DD *                                                         00110000
+    SORT FIELDS=(1,5,CH,A)                                              00120003
+    OMIT COND=(1,5,CH,EQ,C' ')                                          00130003
+    OUTFIL STARTREC=2,ENDREC=12                                         00131003
+    SUM FIELDS=(7,3,ZD)                                                 00132004
+/*                                                                      00160000
+

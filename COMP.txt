@@ -1,0 +1,9 @@
+//TECN115A JOB NOTIFY=&SYSUID                                           00010002
+//JOBPROC JCLLIB ORDER=IBMUSER.ALL1                                     00040000
+//COBCL EXEC IGYWCL,                                                    00050000
+//          PGMLIB=TECN115.COBOL.LOADLIB,                               00060005
+//          COPYLIB=TECN115.L1G.AGTCMN.PDS,                             00061010
+//          GOPGM=CA11G115                                              00070034
+//COBOL.SYSIN DD DSN=TECN115.L1G.AGTCMN.PDS(CA11G115),DISP=SHR          00080034
+//LKED.SYSLIB DD DSN=TECN115.COBOL.LOADLIB,DISP=SHR                     00090034
+

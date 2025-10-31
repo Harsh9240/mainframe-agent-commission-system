@@ -1,0 +1,190 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. CA11G115.                                            00020001
+       ENVIRONMENT DIVISION.                                            00030001
+       INPUT-OUTPUT SECTION.                                            00040001
+       FILE-CONTROL.                                                    00050001
+            SELECT TI001-PS ASSIGN TO INPAGTPS                          00060003
+                   ORGANIZATION IS SEQUENTIAL                           00070033
+                   ACCESS IS SEQUENTIAL                                 00080033
+                   FILE STATUS IS WS-FST-TI001                          00090033
+                   .                                                    00100033
+            SELECT TO001-KS ASSIGN TO OUTAGTKS                          00110007
+                   ORGANIZATION IS INDEXED                              00120033
+                   ACCESS IS RANDOM                                     00130033
+                   RECORD KEY IS AGENT-CODE1                            00140033
+                   FILE STATUS IS WS-FST-TO001                          00150033
+                   .                                                    00160033
+       DATA DIVISION.                                                   00170004
+       FILE SECTION.                                                    00180004
+       FD TI001-PS.                                                     00190004
+       01 TI001-PS-REC.                                                 00200004
+           05 AGENT-CODE          PIC X(05).                            00201033
+           05 FILLER              PIC X(01).                            00202033
+           05 POLICY-COUNT        PIC 9(03).                            00203033
+           05 FILLER              PIC X(01).                            00204033
+           05 AGENT-STATUS        PIC X(08).                            00210033
+           05 FILLER              PIC X(01).                            00220033
+           05 POLICY-TYPE         PIC X(09).                            00230033
+           05 FILLER              PIC X(01).                            00240033
+           05 COMMISION           PIC 9(03).9(02).                      00250033
+           05 FILLER              PIC X(45).                            00251033
+       FD TO001-KS.                                                     00260006
+       01 TO001-KS-REC.                                                 00270006
+           05 AGENT-CODE1         PIC X(05).                            00271033
+           05 FILLER              PIC X(01).                            00272033
+           05 POLICY-COUNT1       PIC 9(03).                            00273033
+           05 FILLER              PIC X(01).                            00274033
+           05 AGENT-STATUS1       PIC X(08).                            00275033
+           05 FILLER              PIC X(01).                            00276033
+           05 POLICY-TYPE1        PIC X(09).                            00277033
+           05 FILLER              PIC X(01).                            00278033
+           05 COMMISION1          PIC 9(03).9(02).                      00279033
+           05 FILLER              PIC X(01).                            00279133
+           05 TOTAL-COMM          PIC 9(07).9(02).                      00280033
+           05 FILLER              PIC X(01).                            00290033
+           05 GRADE               PIC X(09).                            00300033
+           05 FILLER              PIC X(24).                            00301033
+       WORKING-STORAGE SECTION.                                         00310004
+       01 WS-VAR.                                                       00320004
+           05 WS-FST-TI001        PIC 9(02).                            00321033
+              88 C05-TI001-SUCC   VALUE 00.                             00322033
+              88 C05-TI001-EOF    VALUE 10.                             00323033
+           05 WS-FST-TO001        PIC 9(02).                            00324033
+              88 C05-TO001-SUCC   VALUE 00.                             00325033
+              88 C05-TO001-EOF    VALUE 10.                             00326033
+       01 WS-COMM1                PIC 9(03) VALUE ZEROES.               00341033
+       01 WS-COMM2                PIC 9(02) VALUE ZEROES.               00342033
+       01 WS-PC                   PIC 9(03).                            00344033
+       01 WS-CM                   PIC 9(03)V9(02).                      00344133
+       01 WS-TM                   PIC 9(07)V9(02).                      00345033
+       PROCEDURE DIVISION.                                              00350004
+       0000-MAIN-PARA.                                                  00360004
+           PERFORM 1000-INIT-PARA                                       00361006
+           THRU    1000-INIT-PARA                                       00362005
+           PERFORM 3000-PROC-PARA                                       00370004
+           THRU    3000-PROC-PARA-EXIT                                  00380005
+           PERFORM 9000-TERM-PARA                                       00390004
+           .                                                            00400004
+       1000-INIT-PARA.                                                  00401005
+           CONTINUE                                                     00402005
+           .                                                            00403005
+       1000-INIT-PARA-EXIT.                                             00404005
+           EXIT                                                         00405005
+           .                                                            00406005
+       3000-PROC-PARA.                                                  00410004
+           PERFORM 3100-OPEN-PARA                                       00420004
+           THRU    3100-OPEN-PARA-EXIT                                  00430005
+           PERFORM 3200-READ-PARA                                       00440004
+           THRU    3200-READ-PARA-EXIT UNTIL C05-TI001-EOF              00450023
+           PERFORM 3300-CLOSE-PARA                                      00460005
+           THRU    3300-CLOSE-PARA-EXIT                                 00470005
+           .                                                            00480005
+       3000-PROC-PARA-EXIT.                                             00490005
+           EXIT                                                         00500005
+           .                                                            00510005
+       9000-TERM-PARA.                                                  00520005
+           STOP RUN                                                     00530005
+           .                                                            00540005
+       3100-OPEN-PARA.                                                  00550005
+           OPEN INPUT TI001-PS                                          00560005
+           EVALUATE TRUE                                                00570005
+           WHEN C05-TI001-SUCC                                          00580023
+                DISPLAY "INPUT FILE OPENED"                             00590005
+           WHEN OTHER                                                   00600005
+                DISPLAY "INPUT FILE OPEN FAILED: " WS-FST-TI001         00610005
+                PERFORM 9000-TERM-PARA                                  00620005
+           END-EVALUATE                                                 00630005
+           OPEN OUTPUT TO001-KS                                         00640006
+           EVALUATE TRUE                                                00650005
+           WHEN C05-TO001-SUCC                                          00660023
+                DISPLAY "OUTPUT FILE OPENED"                            00670005
+           WHEN OTHER                                                   00680005
+                DISPLAY "OUTPUT FILE OPEN FAILED: " WS-FST-TO001        00690005
+                PERFORM 9000-TERM-PARA                                  00700005
+           END-EVALUATE                                                 00710005
+           .                                                            00711005
+       3100-OPEN-PARA-EXIT.                                             00720005
+           EXIT                                                         00730005
+           .                                                            00740005
+       3200-READ-PARA.                                                  00750005
+           MOVE SPACES TO TI001-PS-REC TO001-KS-REC                     00760023
+           READ TI001-PS                                                00770005
+           EVALUATE TRUE                                                00780005
+           WHEN C05-TI001-SUCC                                          00790023
+                PERFORM 3210-VALID-PARA                                 00800005
+                THRU 3210-VALID-PARA-EXIT                               00810005
+           WHEN C05-TO001-EOF                                           00820023
+                DISPLAY "ALL RECORDS PROCESSED"                         00830005
+           WHEN OTHER                                                   00840005
+                DISPLAY "TI001 READ FAILED: " WS-FST-TI001              00850005
+           END-EVALUATE                                                 00860005
+           .                                                            00870005
+       3200-READ-PARA-EXIT.                                             00880005
+           EXIT                                                         00890005
+           .                                                            00900005
+       3210-VALID-PARA.                                                 00910005
+           MOVE COMMISION(1:3) TO WS-COMM1                              00911005
+           MOVE COMMISION(5:2) TO WS-COMM2                              00912005
+           EVALUATE TRUE                                                00920005
+           WHEN POLICY-COUNT IS NUMERIC AND                             00930005
+                (AGENT-STATUS = "ACTIVE" OR "INACTIVE") AND             00940005
+                POLICY-TYPE > ' ' AND                                   00950006
+                WS-COMM1 IS NUMERIC AND WS-COMM2 IS NUMERIC             00960005
+                PERFORM 3220-PROCESS-PARA                               00970005
+                THRU    3220-PROCESS-PARA-EXIT                          00980005
+           WHEN OTHER                                                   00990005
+                DISPLAY "DATA IS INVALID" WS-FST-TI001                  00991034
+           END-EVALUATE                                                 00992005
+           .                                                            00993005
+       3210-VALID-PARA-EXIT.                                            01000005
+           EXIT                                                         01010005
+           .                                                            01020005
+       3220-PROCESS-PARA.                                               01030007
+           IF AGENT-STATUS = 'INACTIVE'                                 01040005
+              CONTINUE                                                  01050005
+           ELSE                                                         01060005
+           EVALUATE TRUE                                                01070005
+           WHEN AGENT-STATUS = 'ACTIVE' AND POLICY-COUNT < 300          01080005
+              MOVE 'AVERAGE'  TO GRADE                                  01090034
+           WHEN AGENT-STATUS = 'ACTIVE' AND POLICY-COUNT = 300          01100005
+              MOVE 'GOOD'     TO GRADE                                  01110034
+           WHEN AGENT-STATUS = 'ACTIVE' AND POLICY-COUNT > 300          01120005
+              MOVE 'EXCELLENT' TO GRADE                                 01130005
+           END-EVALUATE                                                 01130131
+           MOVE POLICY-COUNT TO WS-PC                                   01131120
+           MOVE COMMISION    TO WS-CM                                   01131234
+           MOVE 0 TO WS-TM                                              01131323
+           CALL "CA21G115" USING BY REFERENCE WS-PC WS-CM               01131425
+            WS-TM                                                       01131525
+           DISPLAY WS-TM                                                01131624
+           MOVE AGENT-CODE   TO AGENT-CODE1                             01131733
+           MOVE POLICY-COUNT TO POLICY-COUNT1                           01131820
+           MOVE AGENT-STATUS TO AGENT-STATUS1                           01131920
+           MOVE POLICY-TYPE  TO POLICY-TYPE1                            01132033
+           MOVE COMMISION    TO COMMISION1                              01132133
+           MOVE WS-TM        TO TOTAL-COMM                              01132233
+           PERFORM 3230-WRITE-PARA                                      01132310
+           THRU    3230-WRITE-PARA-EXIT                                 01132410
+           END-IF                                                       01132531
+           .                                                            01133005
+       3220-PROCESS-PARA-EXIT.                                          01140005
+           EXIT                                                         01150005
+           .                                                            01160005
+       3230-WRITE-PARA.                                                 01161010
+           WRITE TO001-KS-REC.                                          01162010
+           EVALUATE TRUE                                                01162119
+             WHEN C05-TO001-SUCC                                        01162223
+                  DISPLAY "WRITE SUCCESS"                               01162323
+             WHEN OTHER                                                 01162419
+                  DISPLAY "WRITE FAILED" WS-FST-TO001                   01162532
+           END-EVALUATE                                                 01162631
+           .                                                            01162719
+       3230-WRITE-PARA-EXIT.                                            01163010
+           EXIT                                                         01164019
+           .                                                            01165019
+       3300-CLOSE-PARA.                                                 01170006
+           CLOSE TI001-PS TO001-KS.                                     01180009
+       3300-CLOSE-PARA-EXIT.                                            01190006
+           EXIT                                                         01200006
+           .                                                            01210006
+
